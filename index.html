@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My ChatGPT Agent Interface</title>
+    <title>ChatGPT Interface</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,6 +29,17 @@
             padding: 20px;
             overflow-y: auto;
         }
+        #chat-get-api-link {
+            display: inline-block;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         .message {
             margin-bottom: 15px;
         }
@@ -49,19 +60,20 @@
             background-color: #e5e5ea;
             color: black;
         }
-        #input-container {
+
+        .input-container {
             display: flex;
             border-top: 1px solid #ddd;
             padding: 10px;
         }
-        #input-container input {
+        .input-container input {
             flex: 1;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 20px;
             outline: none;
         }
-        #input-container button {
+        .input-container button {
             padding: 10px 15px;
             border: none;
             background-color: #0084ff;
@@ -70,14 +82,34 @@
             margin-left: 10px;
             cursor: pointer;
         }
+        #link-container {
+            display: flex;
+            border-top: 1px solid #ddd;
+            padding: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+        #link-container link {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
     </style>
 </head>
 <body>
     <div id="chat-container">
-        <div id="chat-box"></div>
-        <div id="input-container">
+        <div id="chat-box">My ChatGpt Agent</div>
+        <div class="input-container">
+            <input type="text" id="api-key" placeholder="YOU API KEY...">
+        </div>
+        <div class="input-container">
             <input type="text" id="user-input" placeholder="Type a message...">
             <button id="send-button">Send</button>
+        </div>
+        <div id="link-container">
+            <a href="https://platform.openai.com/api-keys" target="_blank">Get your OpenAI API KEY</a>
         </div>
     </div>
 
@@ -116,7 +148,7 @@
         }
 
         async function getBotResponse(userMessage) {
-            const apiKey = 'YOUR_API_KEY';  // Replace with your OpenAI API key
+            const apiKey = document.getElementById('api-key').value || 'YOUR_API_KEY';  // Replace with your OpenAI API key and remove the code: 'document.getElementById('api-key').value ||'
             const endpoint = 'https://api.openai.com/v1/chat/completions';
             const payload = {
                 model: "gpt-3.5-turbo",  // Specify the model
