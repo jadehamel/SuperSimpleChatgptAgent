@@ -134,7 +134,7 @@
             <textarea wrap="hard" id="agent-role" placeholder="Provide your agent role...">You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language.</textarea>
         </div>
         <div class="input-container">
-            <input type="text" id="api-key" placeholder="YOU API KEY...">
+            <input type="text" id="apikeyInput" name="apikey" placeholder="YOU API KEY...">
         </div>
         <div id="link-container">
             <a href="https://platform.openai.com/api-keys" target="_blank">Get your OpenAI API KEY</a>
@@ -142,6 +142,36 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var apiKeyInput = document.getElementById('apikeyInput');
+
+            // Function to get cookie value by name
+            function getCookieValue(cookieName) {
+                var name = cookieName + '=';
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var cookieArray = decodedCookie.split(';');
+                for (var i = 0; i < cookieArray.length; i++) {
+                    var cookie = cookieArray[i].trim();
+                    if (cookie.indexOf(name) === 0) {
+                        return cookie.substring(name.length, cookie.length);
+                    }
+                }
+                return '';
+            }
+
+            // Retrieve and set cookie value in input field on page load
+            var agentApiKeyValue = getCookieValue('agent_apikey');
+            if (agentApiKeyValue !== '') {
+                apiKeyInput.value = agentApiKeyValue;
+            }
+
+            // Event listener to update cookie on input change
+            apiKeyInput.addEventListener('input', function() {
+                var apiKeyValue = apiKeyInput.value;
+                document.cookie = 'agent_apikey=' + encodeURIComponent(apiKeyValue);
+                console.log('Cookie set:', document.cookie);
+            });
+        });
         document.getElementById('send-button').addEventListener('click', sendMessage);
         document.getElementById('user-input').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
@@ -176,7 +206,7 @@
         }
 
         async function getBotResponse(userMessage) {
-            const apiKey = document.getElementById('api-key').value || 'YOUR_API_KEY';  // Replace with your OpenAI API key and remove the code: 'document.getElementById('api-key').value ||'
+            const apiKey = document.getElementById('apikeyInput').value || 'YOUR_API_KEY';  // Replace with your OpenAI API key and remove the code: 'document.getElementById('apikeyInput').value ||'
             const endpoint = 'https://api.openai.com/v1/chat/completions';
             const payload = {
                 model: "gpt-3.5-turbo",  // Specify the model
