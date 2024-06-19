@@ -143,7 +143,7 @@
 </head>
 <body>
     <div id="chat-container">
-        <div id="chat-box">My ChatGpt Agent <a href="https://github.com/jadehamel/SuperSimpleChatgptAgent" target="_blank">code</a></div>
+        <div id="chat-box">My ChatGpt Agent </div>
         <div class="input-container">
             <input type="text" id="user-input" placeholder="Type a message...">
             <button id="send-button">Send</button>
@@ -163,7 +163,7 @@
     </div>
     <div class="content"></div>
     <footer class="footer">
-        &copy; <a href="https://jadehamel.fr">Jade Hamel</a>
+        &copy; <a href="https://jadehamel.fr">Jade Hamel</a> -  <a href="https://github.com/jadehamel/SuperSimpleChatgptAgent" target="_blank">https://github.com/jadehamel/SuperSimpleChatgptAgent</a>
     </footer>
 
     <script>
@@ -194,7 +194,7 @@
             // Event listener to update cookie on input change
             apiKeyInput.addEventListener('input', function() {
                 var apiKeyValue = apiKeyInput.value;
-                document.cookie = 'agent_role=' + encodeURIComponent(apiKeyValue);
+                document.cookie = 'agent_apikey=' + encodeURIComponent(apiKeyValue);
                 console.log('Cookie set:', document.cookie);
             });
 
@@ -205,7 +205,7 @@
 
             agentRole.addEventListener('input', function() {
                 var agentRoleValue = agentRole.value
-                document.cookie = 'agent_apikey=' + encodeURIComponent(agentRoleValue);
+                document.cookie = 'agent_role=' + encodeURIComponent(agentRoleValue);
                 console.log('Cookie set:', document.cookie);
             });
         });
