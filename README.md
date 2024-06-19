@@ -1,4 +1,4 @@
-# SuperSimpleChatgptAgent
+# Super simple Javascript ChatGPT Agent
 A one page html document with all the code need to customize your own ChatGPT agent
 
 ### Demo
