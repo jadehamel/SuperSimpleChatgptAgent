@@ -60,7 +60,6 @@
             background-color: #e5e5ea;
             color: black;
         }
-
         .input-container {
             display: flex;
             border-top: 1px solid #ddd;
@@ -71,7 +70,26 @@
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 20px;
-            outline: none;
+        }
+        .input-text {
+            font-family: Arial, sans-serif;
+            flex: 1;
+            width: 25%;
+            padding: 10px;
+            display: block;
+            margin-bottom: 20px;
+        }
+        .input-container text {
+            font-family: Arial, sans-serif;
+            font-weight: lighter;
+        }
+        .input-container textarea {
+            display: block;
+            font-family: Arial, sans-serif;
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
         }
         .input-container button {
             padding: 10px 15px;
@@ -81,6 +99,10 @@
             border-radius: 20px;
             margin-left: 10px;
             cursor: pointer;
+        }
+        #agent-role {
+            height: 100px;
+            resize: vertical;
         }
         #link-container {
             display: flex;
@@ -111,6 +133,11 @@
         <div id="link-container">
             <a href="https://platform.openai.com/api-keys" target="_blank">Get your OpenAI API KEY</a>
         </div>
+        <div class="input-container">
+            Agent Role
+        </div>
+        <div class="input-container">
+            <textarea wrap="hard" id="agent-role" placeholder="Provide your agent role...">You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language.</textarea>
     </div>
 
     <script>
@@ -153,7 +180,7 @@
             const payload = {
                 model: "gpt-3.5-turbo",  // Specify the model
                 messages: [
-                    { role: "system", content: "You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language." },
+                    { role: "system", content: document.getElementById('agent-role').value || "You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language." },  // Replace with your Agent specific role and remove the code: 'document.getElementById('agent-role').value ||'
                     { role: "user", content: userMessage }
                 ],
                 max_tokens: 150,
