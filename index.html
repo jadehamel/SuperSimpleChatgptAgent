@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #chat-container {
+            width: 400px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .message {
+            margin-bottom: 15px;
+        }
+        .message.user {
+            text-align: right;
+        }
+        .message p {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 80%;
+        }
+        .message.user p {
+            background-color: #0084ff;
+            color: white;
+        }
+        .message.bot p {
+            background-color: #e5e5ea;
+            color: black;
+        }
+        #input-container {
+            display: flex;
+            border-top: 1px solid #ddd;
+            padding: 10px;
+        }
+        #input-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+        #input-container button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #0084ff;
+            color: white;
+            border-radius: 20px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Type a message...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('send-button').addEventListener('click', sendMessage);
+        document.getElementById('user-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        async function sendMessage() {
+            const inputField = document.getElementById('user-input');
+            const userMessage = inputField.value.trim();
+
+            if (userMessage === '') {
+                return;
+            }
+
+            appendMessage('user', userMessage);
+            inputField.value = '';
+
+            const botMessage = await getBotResponse(userMessage);
+            appendMessage('bot', botMessage);
+        }
+
+        function appendMessage(sender, message) {
+            const chatBox = document.getElementById('chat-box');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender);
+            const messageContent = document.createElement('p');
+            messageContent.textContent = message;
+            messageElement.appendChild(messageContent);
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function getBotResponse(userMessage) {
+            const apiKey = 'YOUR_API_KEY';  // Replace with your OpenAI API key
+            const endpoint = 'https://api.openai.com/v1/chat/completions';
+            const payload = {
+                model: "gpt-3.5-turbo",  // Specify the model
+                messages: [
+                    { role: "system", content: "You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language." },
+                    { role: "user", content: userMessage }
+                ],
+                max_tokens: 150,
+                temperature: 0.5,
+                top_p: 0.9,
+                frequency_penalty: 0.5,
+                presence_penalty: 0.5
+            };
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                if (data.choices && data.choices.length > 0) {
+                    return data.choices[0].message.content.trim();
+                } else {
+                    return 'Sorry, I am having trouble responding at the moment. Please try again later.';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                return 'Sorry, I am having trouble responding at the moment. Please try again later.';
+            }
+        }
+    </script>
+</body>
+</html>
