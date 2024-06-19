@@ -100,7 +100,7 @@
             margin-left: 10px;
             cursor: pointer;
         }
-        #agent-role {
+        #agentRole {
             height: 100px;
             resize: vertical;
         }
@@ -131,7 +131,7 @@
             Agent Role
         </div>
         <div class="input-container">
-            <textarea wrap="hard" id="agent-role" placeholder="Provide your agent role...">You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language.</textarea>
+            <textarea wrap="hard" id="agentRole" name="agentRole" placeholder="Provide your agent role...">You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language.</textarea>
         </div>
         <div class="input-container">
             <input type="text" id="apikeyInput" name="apikey" placeholder="YOU API KEY...">
@@ -144,6 +144,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var apiKeyInput = document.getElementById('apikeyInput');
+            var agentRole = document.getElementById('agentRole');
 
             // Function to get cookie value by name
             function getCookieValue(cookieName) {
@@ -168,10 +169,22 @@
             // Event listener to update cookie on input change
             apiKeyInput.addEventListener('input', function() {
                 var apiKeyValue = apiKeyInput.value;
-                document.cookie = 'agent_apikey=' + encodeURIComponent(apiKeyValue);
+                document.cookie = 'agent_role=' + encodeURIComponent(apiKeyValue);
+                console.log('Cookie set:', document.cookie);
+            });
+
+            var agentRoleValue = getCookieValue('agent_role');
+            if (agentRoleValue !== '') {
+                agentRole.value = agentRoleValue;
+            }
+
+            agentRole.addEventListener('input', function() {
+                var agentRoleValue = agentRole.value
+                document.cookie = 'agent_apikey=' + encodeURIComponent(agentRoleValue);
                 console.log('Cookie set:', document.cookie);
             });
         });
+
         document.getElementById('send-button').addEventListener('click', sendMessage);
         document.getElementById('user-input').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
@@ -211,7 +224,7 @@
             const payload = {
                 model: "gpt-3.5-turbo",  // Specify the model
                 messages: [
-                    { role: "system", content: document.getElementById('agent-role').value || "You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language." },  // Replace with your Agent specific role and remove the code: 'document.getElementById('agent-role').value ||'
+                    { role: "system", content: document.getElementById('agentRole').value || "You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language." },  // Replace with your Agent specific role and remove the code: 'document.getElementById('agentRole').value ||'
                     { role: "user", content: userMessage }
                 ],
                 max_tokens: 150,
