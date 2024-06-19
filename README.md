@@ -12,6 +12,6 @@ This demo showcases the user interface where you can interact with an AI chat ag
 
 ### How to get my OpenAI API KEY
 
-[How to get my OpenAI API KEY](https://platform.openai.com/api-keys)
+[GET my OpenAI API KEY](https://platform.openai.com/api-keys)
 
 You can find your Secret API key on the API key page.
