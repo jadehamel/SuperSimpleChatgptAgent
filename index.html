@@ -16,7 +16,7 @@
             background-color: #f0f0f0;
         }
         #chat-container {
-            width: 400px;
+            width: 80%;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -102,11 +102,11 @@
     <div id="chat-container">
         <div id="chat-box">My ChatGpt Agent</div>
         <div class="input-container">
-            <input type="text" id="api-key" placeholder="YOU API KEY...">
-        </div>
-        <div class="input-container">
             <input type="text" id="user-input" placeholder="Type a message...">
             <button id="send-button">Send</button>
+        </div>
+        <div class="input-container">
+            <input type="text" id="api-key" placeholder="YOU API KEY...">
         </div>
         <div id="link-container">
             <a href="https://platform.openai.com/api-keys" target="_blank">Get your OpenAI API KEY</a>
@@ -177,7 +177,11 @@
                 if (data.choices && data.choices.length > 0) {
                     return data.choices[0].message.content.trim();
                 } else {
-                    return 'Sorry, I am having trouble responding at the moment. Please try again later.';
+                    if (data.error && data.error.message) {
+                        return '(' + data.error.code + ') ' + data.error.message; 
+                    } else {
+                        return 'Sorry, I am having trouble responding at the moment. Please try again later.';
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
