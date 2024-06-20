@@ -216,7 +216,6 @@
       botModel.value = AgentModel;
       botEndPoint.value = endPoint;
 
-      // Function to get cookie value
       function getCookieValue(cookieName) {
         var name = cookieName + '=';
         var decodedCookie = decodeURIComponent(document.cookie);
@@ -230,31 +229,26 @@
         return '';
       }
 
-      // Initialize API Key input value from cookie
       var agentApiKeyValue = getCookieValue('agent_apikey');
       if (agentApiKeyValue !== '') {
         apiKeyInput.value = agentApiKeyValue;
       }
 
-      // Event listener for API Key input changes
       apiKeyInput.addEventListener('input', function() {
         var apiKeyValue = apiKeyInput.value;
         document.cookie = 'agent_apikey=' + encodeURIComponent(apiKeyValue);
       });
 
-      // Initialize Agent Role input value from cookie
       var agentRoleValue = getCookieValue('agent_role');
       if (agentRoleValue !== '') {
         agentRole.value = agentRoleValue;
       }
 
-      // Event listener for Agent Role input changes
       agentRole.addEventListener('input', function() {
         var agentRoleValue = agentRole.value;
         document.cookie = 'agent_role=' + encodeURIComponent(agentRoleValue);
       });
 
-      // Initialize Agent Bot select value from cookie
       var agentBotValue = getCookieValue('agent_bot');
       if (agentBotValue !== '') {
         agentBot.value = agentBotValue;
