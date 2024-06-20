@@ -1,5 +1,8 @@
-# Super simple Javascript ChatGPT Agent
-A one page html document with all the code need to customize your own ChatGPT agent
+# Super simple Javascript A.I. Agent
+A unique document (HTML, Javascript CSS) containing all the code needed to customize your own ChatGPT agent
+- No external librabry
+- Test your settings directly into the UI
+- ChatGpt and Llama supported
 
 ### Demo
 
