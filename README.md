@@ -6,7 +6,7 @@ A unique document (HTML, Javascript CSS) containing all the code needed to custo
 
 ### Demo
 
-[Demo](https://jadehamel.fr/ai/chatgptagent/)
+[https://jadehamel.fr/ai/chatgptagent/](https://jadehamel.fr/ai/chatgptagent/)
 
 This demo showcases the user interface where you can interact with an AI chat agent. Please note, to use the chat function, you need to update the `API_KEY` in the code. If not updated, you will receive an error response, but you can still experience the user experience. 
 
