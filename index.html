@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatGPT Interface</title>
+    <title>A.I. Agent Interface</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,25 +16,9 @@
             background-color: #f0f0f0;
             min-height: 100vh;
             flex-direction: column;
-        }
-        .content {
-          flex: 1;
+            overflow-y: scroll;
         }
 
-        .footer {
-          background-color: white;
-          text-align: center;
-          padding: 1em;
-          position: fixed;
-          bottom: 0;
-          width: 100%;
-          box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .footer a {
-          color: #000;
-          text-decoration: none;
-        }
         #chat-container {
             width: 80%;
             background-color: white;
@@ -92,6 +76,12 @@
             border: 1px solid #ddd;
             border-radius: 20px;
         }
+        .input-container select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+        }
         .input-text {
             font-family: Arial, sans-serif;
             flex: 1;
@@ -143,7 +133,24 @@
 </head>
 <body>
     <div id="chat-container">
-        <div id="chat-box">My ChatGpt Agent </div>
+
+        <div class="input-container">
+            My Custom Agent
+        </div>
+        <div class="input-container">
+           <select id="agentBot" name="agentBot">
+                <option value="chatGPT" selected>ChatGPT</option>
+                <option value="Llama">Llama</option>
+            </select>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="agentEndPoint" name="agentEndPoint" value="https://api.openai.com/v1/chat/completions">
+        </div>
+        <div class="input-container">
+            <input type="text" id="agentModel" name="agentModel" value="gpt-3.5-turbo">
+        </div>
+        <div id="chat-box"></div>
         <div class="input-container">
             <input type="text" id="user-input" placeholder="Type a message...">
             <button id="send-button">Send</button>
@@ -161,17 +168,21 @@
             <a href="https://platform.openai.com/api-keys" target="_blank">Get your OpenAI API KEY</a>
         </div>
     </div>
-    <div class="content"></div>
-    <footer class="footer">
-        &copy; <a href="https://jadehamel.fr">Jade Hamel</a> -  <a href="https://github.com/jadehamel/SuperSimpleChatgptAgent" target="_blank">https://github.com/jadehamel/SuperSimpleChatgptAgent</a>
-    </footer>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var apiKeyInput = document.getElementById('apikeyInput');
             var agentRole = document.getElementById('agentRole');
+            var agentBot = document.getElementById('agentBot');
+            var chatBox = document.getElementById('chat-box');
+            var endPoint = "https://api.openai.com/v1/chat/completions";
+            var AgentModel = "gpt-3.5-turbo";
+            var AgentEndPoint = "https://api.openai.com/v1/chat/completions";
+            var botModel = document.getElementById('agentModel');
+            var botEndPoint = document.getElementById('agentEndPoint');
+            botModel.value = AgentModel;
+            botEndPoint.value = endPoint;
 
-            // Function to get cookie value by name
+            // Function to get cookie value
             function getCookieValue(cookieName) {
                 var name = cookieName + '=';
                 var decodedCookie = decodeURIComponent(document.cookie);
@@ -185,105 +196,122 @@
                 return '';
             }
 
-            // Retrieve and set cookie value in input field on page load
+            // Initialize API Key input value from cookie
             var agentApiKeyValue = getCookieValue('agent_apikey');
             if (agentApiKeyValue !== '') {
                 apiKeyInput.value = agentApiKeyValue;
             }
 
-            // Event listener to update cookie on input change
+            // Event listener for API Key input changes
             apiKeyInput.addEventListener('input', function() {
                 var apiKeyValue = apiKeyInput.value;
                 document.cookie = 'agent_apikey=' + encodeURIComponent(apiKeyValue);
-                console.log('Cookie set:', document.cookie);
             });
 
+            // Initialize Agent Role input value from cookie
             var agentRoleValue = getCookieValue('agent_role');
             if (agentRoleValue !== '') {
                 agentRole.value = agentRoleValue;
             }
 
+            // Event listener for Agent Role input changes
             agentRole.addEventListener('input', function() {
-                var agentRoleValue = agentRole.value
+                var agentRoleValue = agentRole.value;
                 document.cookie = 'agent_role=' + encodeURIComponent(agentRoleValue);
-                console.log('Cookie set:', document.cookie);
             });
-        });
 
-        document.getElementById('send-button').addEventListener('click', sendMessage);
-        document.getElementById('user-input').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        async function sendMessage() {
-            const inputField = document.getElementById('user-input');
-            const userMessage = inputField.value.trim();
-
-            if (userMessage === '') {
-                return;
+            // Initialize Agent Bot select value from cookie
+            var agentBotValue = getCookieValue('agent_bot');
+            if (agentBotValue !== '') {
+                agentBot.value = agentBotValue;
             }
 
-            appendMessage('user', userMessage);
-            inputField.value = '';
+            // Event listener for Agent Bot select changes
+            agentBot.addEventListener('change', function(event) {
+                var agentBotValue = agentBot.value;
+                AgentEndPoint = (agentBotValue === "Llama") ? "http://localhost:1234/v1/chat/completions" : "https://api.openai.com/v1/chat/completions";
+                document.cookie = 'agent_bot=' + encodeURIComponent(agentBotValue);
+                botModel.value = "gpt-3.5-turbo";
+                botEndPoint.value = AgentEndPoint;
+            });
 
-            const botMessage = await getBotResponse(userMessage);
-            appendMessage('bot', botMessage);
-        }
+            // Event listener for send button click
+            document.getElementById('send-button').addEventListener('click', sendMessage);
 
-        function appendMessage(sender, message) {
-            const chatBox = document.getElementById('chat-box');
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', sender);
-            const messageContent = document.createElement('p');
-            messageContent.textContent = message;
-            messageElement.appendChild(messageContent);
-            chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        async function getBotResponse(userMessage) {
-            const apiKey = document.getElementById('apikeyInput').value || 'YOUR_API_KEY';  // Replace with your OpenAI API key and remove the code: 'document.getElementById('apikeyInput').value ||'
-            const endpoint = 'https://api.openai.com/v1/chat/completions';
-            const payload = {
-                model: "gpt-3.5-turbo",  // Specify the model
-                messages: [
-                    { role: "system", content: document.getElementById('agentRole').value || "You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language." },  // Replace with your Agent specific role and remove the code: 'document.getElementById('agentRole').value ||'
-                    { role: "user", content: userMessage }
-                ],
-                max_tokens: 150,
-                temperature: 0.5,
-                top_p: 0.9,
-                frequency_penalty: 0.5,
-                presence_penalty: 0.5
-            };
-
-            try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-                if (data.choices && data.choices.length > 0) {
-                    return data.choices[0].message.content.trim();
-                } else {
-                    if (data.error && data.error.message) {
-                        return '(' + data.error.code + ') ' + data.error.message; 
-                    } else {
-                        return 'Sorry, I am having trouble responding at the moment. Please try again later.';
-                    }
+            // Event listener for user input enter key press
+            document.getElementById('user-input').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                return 'Sorry, I am having trouble responding at the moment. Please try again later.';
+            });
+
+            async function sendMessage() {
+                const inputField = document.getElementById('user-input');
+                const userMessage = inputField.value.trim();
+
+                if (userMessage === '') {
+                    return;
+                }
+
+                appendMessage('user', userMessage);
+                inputField.value = '';
+
+                const botMessage = await getBotResponse(userMessage);
+                appendMessage('bot', botMessage);
             }
-        }
+
+            function appendMessage(sender, message) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', sender);
+                const messageContent = document.createElement('p');
+                messageContent.textContent = message;
+                messageElement.appendChild(messageContent);
+                chatBox.appendChild(messageElement);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            async function getBotResponse(userMessage) {
+                const apiKey = apiKeyInput.value || 'YOUR_API_KEY';  // Replace with your OpenAI API key
+                const endpoint = AgentEndPoint || 'https://api.openai.com/v1/chat/completions';
+                const payload = {
+                    model: AgentModel,
+                    messages: [
+                        { role: "system", content: agentRole.value || "You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language." },
+                        { role: "user", content: userMessage }
+                    ],
+                    max_tokens: 150,
+                    temperature: 0.5,
+                    top_p: 0.9,
+                    frequency_penalty: 0.5,
+                    presence_penalty: 0.5
+                };
+
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const data = await response.json();
+                    if (data.choices && data.choices.length > 0) {
+                        return data.choices[0].message.content.trim();
+                    } else {
+                        if (data.error && data.error.message) {
+                            return '(' + data.error.code + ') ' + data.error.message;
+                        } else {
+                            return 'Sorry, I am having trouble responding at the moment. Please try again later.';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    return 'Sorry, I am having trouble responding at the moment. Please try again later.';
+                }
+            }
+        });
     </script>
 </body>
 </html>
