@@ -4,48 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>A.I. Agent Interface</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="chat-container">
     <div class="input-container">
-      My Custom A.I. Agent
+      <h2>My Custom A.I. Agent</h2>
     </div>
     <div class="input-container">
       <table width="100%">
         <tr>
           <td id="agent-bot-setting">
-            <table>
-              <tr>
-                <td>Bot: </td>
-                <td>
-                  <select id="agentBot" name="agentBot">
-                  <option value="chatGPT" selected>ChatGPT</option>
-                  <option value="Llama">Llama</option>
-                  </select>
-                </td>
-              </tr>
-            </table>
+            <label for="agentBot">Bot:</label>
+            <select id="agentBot" name="agentBot">
+              <option value="chatGPT" selected>ChatGPT</option>
+              <option value="Llama">Llama</option>
+              <option value="Custom">Custom</option>
+            </select>
           </td>
           <td id="agent-end-point-setting">
-            <table>
-              <tr>
-                <td>EndPoint: </td>
-                <td>
-                  <input type="text" id="agentEndPoint" name="agentEndPoint" value="  https://api.openai.com/v1/chat/completions">
-                </td>
-              </tr>
-            </table>
-          </td>  
+            <label for="agentEndPoint">EndPoint:</label>
+            <input type="text" id="agentEndPoint" name="agentEndPoint" value="https://api.openai.com/v1/chat/completions">
+          </td>
           <td id="agent-model-setting">
-            <table>
-              <tr>
-                <td>Model: </td>
-                <td>
-                  <input type="text" id="agentModel" name="agentModel" value="gpt-3.5-turbo">
-                </td>
-              </tr>
-            </table>
+            <label for="agentModel">Model:</label>
+            <input type="text" id="agentModel" name="agentModel" value="gpt-3.5-turbo">
           </td>
         </tr>
       </table>
@@ -56,13 +39,11 @@
       <button id="send-button">Send</button>
     </div>
     <div class="input-container">
-      Agent Role
+      <label for="agentRole">Agent Role</label>
+      <textarea id="agentRole" name="agentRole" placeholder="Provide your agent role...">You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language.</textarea>
     </div>
     <div class="input-container">
-      <textarea wrap="hard" id="agentRole" name="agentRole" placeholder="Provide your agent role...">You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language.</textarea>
-    </div>
-    <div class="input-container">
-      <input type="text" id="apikeyInput" name="apikey" placeholder="YOU API KEY...">
+      <input type="text" id="apikeyInput" name="apikey" placeholder="YOUR API KEY...">
     </div>
     <div id="link-container">
       <a href="https://platform.openai.com/api-keys" target="_blank">Get your OpenAI API KEY</a>

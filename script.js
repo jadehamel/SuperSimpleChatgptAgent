@@ -1,80 +1,69 @@
 document.addEventListener('DOMContentLoaded', function() {
-  var apiKeyInput = document.getElementById('apikeyInput');
-  var agentRole = document.getElementById('agentRole');
-  var agentBot = document.getElementById('agentBot');
-  var chatBox = document.getElementById('chat-box');
-  var endPoint = "https://api.openai.com/v1/chat/completions";
-  var AgentModel = "gpt-3.5-turbo";
-  var AgentEndPoint = "https://api.openai.com/v1/chat/completions";
-  var botModel = document.getElementById('agentModel');
-  var botEndPoint = document.getElementById('agentEndPoint');
-  botModel.value = AgentModel;
-  botEndPoint.value = endPoint;
+  const apiKeyInput = document.getElementById('apikeyInput');
+  const agentRole = document.getElementById('agentRole');
+  const agentBot = document.getElementById('agentBot');
+  const chatBox = document.getElementById('chat-box');
+  const botModel = document.getElementById('agentModel');
+  const botEndPoint = document.getElementById('agentEndPoint');
 
-  function getCookieValue(cookieName) {
-    var name = cookieName + '=';
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var cookieArray = decodedCookie.split(';');
-    for (var i = 0; i < cookieArray.length; i++) {
-      var cookie = cookieArray[i].trim();
-      if (cookie.indexOf(name) === 0) {
-        return cookie.substring(name.length, cookie.length);
-      }
-    }
-    return '';
-  }
+  const DEFAULT_API_ENDPOINT = "https://api.openai.com/v1/chat/completions";
+  const DEFAULT_MODEL = "gpt-3.5-turbo";
 
-  var agentApiKeyValue = getCookieValue('agent_apikey');
-  if (agentApiKeyValue !== '') {
-    apiKeyInput.value = agentApiKeyValue;
-  }
+  botModel.value = DEFAULT_MODEL;
+  botEndPoint.value = DEFAULT_API_ENDPOINT;
 
-  apiKeyInput.addEventListener('input', function() {
-    var apiKeyValue = apiKeyInput.value;
-    document.cookie = 'agent_apikey=' + encodeURIComponent(apiKeyValue);
-  });
+  loadSettings();
 
-  var agentRoleValue = getCookieValue('agent_role');
-  if (agentRoleValue !== '') {
-    agentRole.value = agentRoleValue;
-  }
-
-  agentRole.addEventListener('input', function() {
-    var agentRoleValue = agentRole.value;
-    document.cookie = 'agent_role=' + encodeURIComponent(agentRoleValue);
-  });
-
-  var agentBotValue = getCookieValue('agent_bot');
-  if (agentBotValue !== '') {
-    agentBot.value = agentBotValue;
-  }
-
-  // Event listener for Agent Bot select changes
-  agentBot.addEventListener('change', function(event) {
-    var agentBotValue = agentBot.value;
-    AgentEndPoint = (agentBotValue === "Llama") ? "http://localhost:1234/v1/chat/completions" : "https://api.openai.com/v1/chat/completions";
-    document.cookie = 'agent_bot=' + encodeURIComponent(agentBotValue);
-    botModel.value = "gpt-3.5-turbo";
-    botEndPoint.value = AgentEndPoint;
-  });
-
-  // Event listener for send button click
+  apiKeyInput.addEventListener('input', saveApiKey);
+  agentRole.addEventListener('input', saveAgentRole);
+  agentBot.addEventListener('change', updateBotSettings);
   document.getElementById('send-button').addEventListener('click', sendMessage);
-
-  // Event listener for user input enter key press
   document.getElementById('user-input').addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
-      sendMessage();
-    }
+    if (event.key === 'Enter') sendMessage();
   });
+
+  function loadSettings() {
+    apiKeyInput.value = getCookieValue('agent_apikey') || '';
+    agentRole.value = getCookieValue('agent_role') || agentRole.placeholder;
+    agentBot.value = getCookieValue('agent_bot') || 'chatGPT';
+    updateBotSettings();
+  }
+
+  function saveApiKey() {
+    setCookie('agent_apikey', apiKeyInput.value);
+  }
+
+  function saveAgentRole() {
+    setCookie('agent_role', agentRole.value);
+  }
+
+  function updateBotSettings() {
+    const agentBotValue = agentBot.value;
+
+    let endPoint = '';
+    let model = '';
+
+    if (agentBotValue === "Llama") {
+      endPoint = "http://localhost:1234/v1/chat/completions";
+      model = "llama-model";
+    } else if (agentBotValue === "chatGPT") {
+      endPoint = DEFAULT_API_ENDPOINT;
+      model = DEFAULT_MODEL;
+    } else if (agentBotValue === "Custom") {
+      endPoint = '';
+      model = '';
+    }
+
+    setCookie('agent_bot', agentBotValue);
+    botModel.value = model;
+    botEndPoint.value = endPoint;
+  }
 
   async function sendMessage() {
     const inputField = document.getElementById('user-input');
     const userMessage = inputField.value.trim();
 
-    if (userMessage === '') {
-      return;
-    }
+    if (!userMessage) return;
 
     appendMessage('user', userMessage);
     inputField.value = '';
@@ -94,12 +83,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   async function getBotResponse(userMessage) {
-    const apiKey = apiKeyInput.value || 'YOUR_API_KEY';  // Replace with your OpenAI API key
-    const endpoint = AgentEndPoint || 'https://api.openai.com/v1/chat/completions';
+    const apiKey = apiKeyInput.value || 'YOUR_API_KEY';
+    const endpoint = botEndPoint.value;
+    const model = botModel.value;
+
     const payload = {
-      model: AgentModel,
+      model: model,
       messages: [
-        { role: "system", content: agentRole.value || "You are a friendly and helpful assistant named Alex. You are knowledgeable in technology, science, and literature. Always be polite and use simple, easy-to-understand language." },
+        { role: "system", content: agentRole.value },
         { role: "user", content: userMessage }
       ],
       max_tokens: 150,
@@ -123,15 +114,29 @@ document.addEventListener('DOMContentLoaded', function() {
       if (data.choices && data.choices.length > 0) {
         return data.choices[0].message.content.trim();
       } else {
-        if (data.error && data.error.message) {
-          return '(' + data.error.code + ') ' + data.error.message;
-        } else {
-          return 'Sorry, I am having trouble responding at the moment. Please try again later.';
-        }
+        return data.error ? `(${data.error.code}) ${data.error.message}` : 'Sorry, I am having trouble responding at the moment. Please try again later.';
       }
     } catch (error) {
       console.error('Error:', error);
       return 'Sorry, I am having trouble responding at the moment. Please try again later.';
     }
+  }
+
+  function getCookieValue(cookieName) {
+    const name = cookieName + '=';
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArray = decodedCookie.split(';');
+    for (const cookie of cookieArray) {
+      let c = cookie.trim();
+      if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
+    }
+    return '';
+  }
+
+  function setCookie(cookieName, cookieValue, days = 365) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = `expires=${d.toUTCString()}`;
+    document.cookie = `${cookieName}=${encodeURIComponent(cookieValue)};${expires};path=/`;
   }
 });
