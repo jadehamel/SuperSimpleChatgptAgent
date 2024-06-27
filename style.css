@@ -1,0 +1,133 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+  min-height: 100vh;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+
+#chat-container {
+  width: 80%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-top: 40px;
+}
+#chat-box {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+#chat-get-api-link {
+  display: inline-block;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.message {
+  margin-bottom: 15px;
+}
+.message.user {
+  text-align: right;
+}
+.message p {
+  display: inline-block;
+  padding: 10px 15px;
+  border-radius: 20px;
+  max-width: 80%;
+}
+.message.user p {
+  background-color: #0084ff;
+  color: white;
+}
+.message.bot p {
+  background-color: #e5e5ea;
+  color: black;
+}
+.input-container {
+  display: flex;
+  border-top: 1px solid #ddd;
+  padding: 10px;
+}
+.input-container input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+}
+.input-container select {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+}
+.input-text {
+  font-family: Arial, sans-serif;
+  flex: 1;
+  width: 25%;
+  padding: 10px;
+  display: block;
+  margin-bottom: 20px;
+}
+.input-container text {
+  font-family: Arial, sans-serif;
+  font-weight: lighter;
+}
+.input-container textarea {
+  display: block;
+  font-family: Arial, sans-serif;
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+}
+.input-container button {
+  padding: 10px 15px;
+  border: none;
+  background-color: #0084ff;
+  color: white;
+  border-radius: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+#agent-bot-setting {
+  text-align: left;
+}
+#agent-end-point-setting {
+  text-align: center;
+}
+#agent-model-setting {
+  text-align: right;
+}
+#agentRole {
+  height: 100px;
+  resize: vertical;
+}
+#link-container {
+  display: flex;
+  border-top: 1px solid #ddd;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+}
+#link-container link {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  outline: none;
+}
