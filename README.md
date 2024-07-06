@@ -3,6 +3,7 @@ A unique document (HTML, Javascript CSS) containing all the code needed to custo
 - No external librabry
 - Test your settings directly into the UI
 - ChatGpt and Llama supported
+- Unlimited custom agents supported
 
 ### Demo
 
